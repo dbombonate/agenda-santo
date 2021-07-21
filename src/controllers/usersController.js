@@ -37,8 +37,7 @@ router.post('/register', async (req, res) => {
     const user = await User.create(req.body);
     return res.send(user);
   } catch (err) {
-    console.log(err);
-    return res.status(400).send({ error: 'Deu erro' });
+    return res.status(400).send({ error: 'Error on registration' });
   }
 });
 
@@ -46,8 +45,16 @@ router.post('/register', async (req, res) => {
 router.get('/:id', async (req, res) => res.send('Rota de edição de usuário.'));
 
 // Rota para deletar usuário
-router.delete('/:id', (req, res) => {
-  res.send('Rota para apagar usuário.');
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedUser = await User.findOne({ _id: req.params.id }).exec();
+    if (!deletedUser) { return res.send({ error: 'Incorrect ID' }); }
+    await User.deleteOne({ _id: req.params.id });
+    if (deletedUser.deletedCount === 0) { return res.send({ alert: 'No user deleted' }); }
+    return res.status(200).send({ deletedUser });
+  } catch (err) {
+    return res.status(400).send({ err });
+  }
 });
 
 module.exports = (app) => app.use('/users', router);
