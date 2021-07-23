@@ -36,7 +36,15 @@ router.post('/', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
-
+  try {
+    const deletedGroup = await Group.findOne({ _id: req.params.id }).exec();
+    if (!deletedGroup) { return res.send({ error: 'Incorrect ID' }); }
+    await Group.deleteOne({ _id: req.params.id });
+    if (deletedGroup.deletedCount === 0) { return res.send({ alert: 'No group deleted' }); }
+    return res.status(200).send({ deletedGroup });
+  } catch (err) {
+    return res.status(400).send({ err });
+  }
 });
 
 module.exports = (app) => app.use('/groups', router);
