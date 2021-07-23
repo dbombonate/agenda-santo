@@ -8,6 +8,7 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 
 require('./controllers/usersController')(app);
+require('./controllers/groupsController')(app);
 
 app.listen(3030, () => {
   console.log('Server is UP.');
