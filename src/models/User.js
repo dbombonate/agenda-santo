@@ -16,8 +16,9 @@ const UserSchema = new mongoose.Schema({
     select: false,
   },
   group: {
-    type: Number,
-    default: 1,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    required: true,
   },
   createdAt: {
     type: Date,
