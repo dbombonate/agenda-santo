@@ -2,17 +2,29 @@ const express = require('express');
 const validator = require('validator');
 
 const User = require('../models/User');
+const Group = require('../models/Group');
 
 const router = express.Router();
 
 // Rota para listar usuários
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find({});
+    const users = await User.find().populate('group', 'name');
 
+    // Validação de usuários cadastrados.
     if (users.length === 0) return res.status(400).send({ alert: 'There are no users registry.' });
 
     return res.status(200).send(users);
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id })
+      .populate('group', 'name');
+    return res.status(200).send({ user });
   } catch (err) {
     return res.status(400).send(err);
   }
@@ -33,16 +45,20 @@ router.post('/register', async (req, res) => {
     const userExists = await User.findOne({ email }).exec();
     if (userExists) return res.status(400).send({ error: 'Email already in use.' });
 
+    // Busca o Grupo Padrão para incluir no req.body
+    const groupId = await Group.findOne({ isDefault: true }).exec();
+    // eslint-disable-next-line no-underscore-dangle
+    const userWithGroup = { ...req.body, group: groupId._id };
     // Cria o usuário e exibe no retorno.
-    const user = await User.create(req.body);
+    const user = await User.create(userWithGroup);
     return res.send(user);
   } catch (err) {
-    return res.status(400).send({ error: 'Error on registration' });
+    return res.status(400).send({ error: 'Error on registration.' });
   }
 });
 
 // Rota de edição de usuários
-router.get('/:id', async (req, res) => res.send('Rota de edição de usuário.'));
+router.put('/:id', async (req, res) => res.send('Rota de edição de usuário.'));
 
 // Rota para deletar usuário
 router.delete('/:id', async (req, res) => {
