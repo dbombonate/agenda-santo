@@ -1,5 +1,12 @@
 # REGRAS DA API
 
+## Usuários - Tabela
+
+- Nome *;
+- Email *;
+- Password *;
+- Grupo (default = grupo Padrão);
+- isAdmin (default = false);
 ## Usuários - Regras
 
 * Email único;
@@ -17,6 +24,11 @@
 * Validar se email já está cadastrado;
 * Validar senha de usuário;
 
+## Grupos - Tabela
+
+- Nome *;
+- Usuario *;
+- isDefault (default = false);
 ## Grupos - Regras
 
 * Todo usuário, ao ser cadastrado, vai para o Grupo Padrão;
@@ -28,3 +40,24 @@
 * Validar o campo nome do Grupo;
 * Validar se o boolean de Default está marcado;
 * Validar se usuário é Admin ao cadastrar Grupo.
+
+## Contatos - Tabela
+
+- Nome *;
+- Fornecedor *;
+- Telefone1 *;
+- Telefone2;
+- Email *;
+- Grupo (default = grupo Padrao);
+- User (default = user logado);
+## Contatos - Regras
+
+* Todo contato deve ter nome, fornecedor, telefone1 e email;
+* Se não enviado, deve ser atribuído ao grupo Padrão;
+* Pertence a um grupo apenas;
+
+## Contatos - Validações
+
+* Validar os campos Nome, Fornecedor, telefone1 e email;
+* Validar se o Grupo informado existe;
+* Gravar o usuário que cadastrou.
