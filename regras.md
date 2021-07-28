@@ -49,7 +49,7 @@
 - Telefone2;
 - Email *;
 - Grupo (default = grupo Padrao);
-- User (default = user logado);
+- User (default = user logado)ck;
 ## Contatos - Regras
 
 * Todo contato deve ter nome, fornecedor, telefone1 e email;
