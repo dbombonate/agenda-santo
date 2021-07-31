@@ -1,16 +1,50 @@
 const express = require('express');
 const Contact = require('../models/Contact');
+const Group = require('../models/Group');
 
 const router = express.Router();
 
 // Rota para listar Contatos
-router.get('/', (req, res) => res.send({ message: 'GET Contacts' }));
+router.get('/', async (req, res) => {
+  try {
+    const contacts = await Contact.find({}).populate('providerId', 'name')
+      .populate('groupId', 'name')
+      .populate('userId', 'name');
+    if (contacts.length === 0) return res.status(400).send({ alert: 'There are no contacts registry.' });
+    return res.status(200).send({ contacts });
+  } catch (error) {
+    return res.status(400).send({ error: 'Error trying to list Contacts' });
+  }
+});
 
 // Rota para listar Contatos por ID
 router.get('/:id', (req, res) => res.send({ message: `GET Contact ID: ${req.params.id}` }));
 
 // Rota para criar Contatos
-router.post('/register', (req, res) => res.send({ message: 'POST Contacts' }));
+router.post('/register', async (req, res) => {
+  const {
+    name, providerId, phoneNumber, email, userId,
+  } = req.body;
+  let { groupId } = req.body;
+  try {
+    // Validações de campos enviados
+    if (!name) return res.status(400).send({ alert: 'Name must be informed.' });
+    if (!phoneNumber) return res.status(400).send({ alert: 'Principal phone number must be informed.' });
+    if (!email) return res.status(400).send({ alert: 'Email must be informed.' });
+    if (!providerId) return res.status(400).send({ alert: 'Provider must be informed.' });
+    if (!userId) return res.status(400).send({ alert: 'User must be informed.' });
+    if (!groupId) {
+      const groupSelection = await Group.findOne({ isDefault: true }).exec();
+      // eslint-disable-next-line no-underscore-dangle
+      groupId = groupSelection._id;
+    }
+    const contact = { groupId, ...req.body };
+    const saveContact = await Contact.create(contact);
+    return res.status(200).send(saveContact);
+  } catch (error) {
+    return res.status(400).send({ error: 'Error trying to save contact' });
+  }
+});
 
 // Rota para apagar Contatos
 router.delete('/:id', (req, res) => res.send({ message: `DELETE Contact ID: ${req.params.id}` }));
