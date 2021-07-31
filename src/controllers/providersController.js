@@ -20,6 +20,9 @@ router.post('/register', async (req, res) => {
     const { name } = req.body;
     // Valida se name está preenchido
     if (!name) return res.status(400).send({ error: 'Incorrect name, check the provider name' });
+    // Valida se fornecedor já cadastrado
+    const providerExists = await Provider.findOne({ name });
+    if (providerExists) return res.status(400).send({ error: 'This provider already exists' });
     const provider = await Provider.create(req.body);
 
     return res.status(200).send({ provider });
