@@ -1,4 +1,5 @@
 const express = require('express');
+const validator = require('validator');
 
 const Contact = require('../models/Contact');
 const Group = require('../models/Group');
@@ -38,7 +39,7 @@ router.post('/register', async (req, res) => {
     // Validações de campos enviados
     if (!name) return res.status(400).send({ alert: 'Name must be informed.' });
     if (!phoneNumber) return res.status(400).send({ alert: 'Principal phone number must be informed.' });
-    if (!email) return res.status(400).send({ alert: 'Email must be informed.' });
+    if (!email || !validator.isEmail(email)) return res.status(400).send({ alert: 'Email must be informed and need to be valid.' });
     if (!providerId) return res.status(400).send({ alert: 'Provider must be informed.' });
     if (!userId) return res.status(400).send({ alert: 'User must be informed.' });
     if (!groupId) {
