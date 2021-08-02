@@ -18,7 +18,14 @@ router.get('/', async (req, res) => {
 });
 
 // Rota para listar Contatos por ID
-router.get('/:id', (req, res) => res.send({ message: `GET Contact ID: ${req.params.id}` }));
+router.get('/:id', async (req, res) => {
+  try {
+    const listedContact = await Contact.findOne({ _id: req.params.id });
+    return res.status(200).send({ listedContact });
+  } catch (error) {
+    return res.status(400).send({ error: 'Invalid ID' });
+  }
+});
 
 // Rota para criar Contatos
 router.post('/register', async (req, res) => {
