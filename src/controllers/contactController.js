@@ -1,4 +1,5 @@
 const express = require('express');
+
 const Contact = require('../models/Contact');
 const Group = require('../models/Group');
 
@@ -54,6 +55,16 @@ router.post('/register', async (req, res) => {
 });
 
 // Rota para apagar Contatos
-router.delete('/:id', (req, res) => res.send({ message: `DELETE Contact ID: ${req.params.id}` }));
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedContact = await Contact.findOne({ _id: req.params.id }).exec();
+    if (!deletedContact) { return res.send({ error: 'Incorrect ID' }); }
+    await Contact.deleteOne({ _id: req.params.id });
+    if (deletedContact.deletedCount === 0) { return res.send({ alert: 'No contact deleted' }); }
+    return res.status(200).send({ deletedContact });
+  } catch (error) {
+    return res.status(400).send({ erro: error });
+  }
+});
 
 module.exports = (app) => app.use('/contacts', router);
