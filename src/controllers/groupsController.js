@@ -47,4 +47,17 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.patch('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const update = await Group.findOneAndUpdate({ _id: id }, { name }, { new: true });
+
+    return res.status(200).send({ update });
+  } catch (error) {
+    return res.status(400).send({ error });
+  }
+});
+
 module.exports = (app) => app.use('/groups', router);
