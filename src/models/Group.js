@@ -9,14 +9,8 @@ const GroupSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
+}, {
+  timestamps: true,
 });
 
 const Group = mongoose.model('Group', GroupSchema);
