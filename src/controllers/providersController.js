@@ -50,7 +50,6 @@ router.patch('/:id', async (req, res) => {
     const { name } = req.body;
 
     const update = await Provider.findOneAndUpdate({ _id: id }, { name }, { new: true });
-    console.log(update);
     return res.status(200).send({ update });
   } catch (error) {
     return res.status(400).send({ error });
